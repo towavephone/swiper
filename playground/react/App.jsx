@@ -1,21 +1,20 @@
 /* eslint-disable no-restricted-globals */
 import React from 'react';
-import SwiperCore, { Navigation, Pagination, Scrollbar, A11y } from '../../build/core';
+import SwiperCore, { Navigation, Pagination, Scrollbar, A11y, Mousewheel } from '../../build/core';
 import { Swiper, SwiperSlide } from '../../build/react';
 
-SwiperCore.use([Navigation, Pagination, Scrollbar, A11y]);
+SwiperCore.use([Navigation, Pagination, Scrollbar, A11y, Mousewheel]);
 
 const App = () => {
   return (
     <main>
       <Swiper
         onSwiper={(swiper) => (window.swiper = swiper)}
-        slidesPerView={3}
-        spaceBetween={50}
         navigation
-        loop
         scrollbar={{ draggable: true }}
         pagination={{ clickable: true }}
+        direction='vertical'
+        mousewheel
       >
         <SwiperSlide>Slide 1</SwiperSlide>
         <SwiperSlide>Slide 2</SwiperSlide>

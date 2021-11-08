@@ -235,6 +235,11 @@ class Swiper {
       // Images
       imagesToLoad: [],
       imagesLoaded: 0,
+
+      // Mousewheel Events
+      mousewheelEventData: {
+        isScrolling: undefined,
+      },
     });
 
     // Install Modules

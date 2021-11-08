@@ -72,4 +72,25 @@ export interface MousewheelOptions {
    * @default null
    */
   thresholdTime?: number | null;
+
+  /* 是否延迟滚动，默认 false */
+  enableDelayScroll?: boolean;
+
+  /* 延迟滚动时间，默认 1000 ms */
+  delayScrollTime?: number
+
+  /* 向下滚动阈值，默认 0.01 */
+  delayScrollNextSnapToThreshold?: number
+
+  /* 向上滚动阈值，默认 1 */
+  delayScrollPrevSnapToThreshold?: number
+
+  /* 延迟滚动鼠标滚轮动画类型 */
+  delayScrollMousewheelTweenType: 'Cubic' | 'Linear' | 'Quad' | 'Quart' | 'Quint' | 'Sine' | 'Expo' | 'Circ' | 'Elastic' | 'Back' | 'Bounce',
+
+  /* 延迟滚动鼠标滚轮动画函数 */
+  delayScrollMousewheelTweenFunc: 'easeIn' | 'easeOut' | 'easeInOut',
+
+  /* 延迟滚动鼠标滚轮动画帧数，一帧时间为 1 / 显示器的频率 */
+  delayScrollMousewheelTweenFrame: number,
 }

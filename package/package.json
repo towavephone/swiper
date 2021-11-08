@@ -1,6 +1,6 @@
 {
-  "name": "swiper",
-  "version": "6.8.4",
+  "name": "xp-swiper",
+  "version": "6.8.6",
   "description": "Most modern mobile touch slider and framework with hardware accelerated transitions",
   "main": "swiper.cjs.js",
   "jsnext:main": "swiper.esm.js",
@@ -23,6 +23,10 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/nolimits4web/Swiper.git"
+  },
+  "publishConfig": {
+    "registry": "http://10.192.30.43:8081/repository/xp-dev-npm/",
+    "_auth": "bnBtLTE6SFU5Z3oyT2kkOHQz"
   },
   "keywords": [
     "swiper",

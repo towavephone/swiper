@@ -1,6 +1,6 @@
 {
   "name": "swiper-src",
-  "version": "6.8.4",
+  "version": "6.8.6",
   "description": "Most modern mobile touch slider and framework with hardware accelerated transitions",
   "scripts": {
     "build:dev": "node scripts/build",
@@ -22,7 +22,7 @@
     "playground:prod": "node scripts/playground --prod",
     "watch:dev": "node scripts/watch",
     "watch:prod": "node scripts/watch --prod",
-    "core": "npm run build:dev:bundle && npm run playground:dev && concurrently --kill-others \"vite ./playground/core\" \"npm run watch:dev\" ",
+    "core": "npm run build:dev:bundle && npm run playground:dev && concurrently --kill-others \"vite --port 3001 ./playground/core\" \"npm run watch:dev\" ",
     "react": "npm run build:dev:react && concurrently --kill-others \"vite ./playground/react\" \"npm run watch:dev\"",
     "vue": "npm run build:dev:vue && concurrently --kill-others \"vite ./playground/vue\" \"npm run watch:dev\"",
     "svelte": "npm run build:dev:svelte && concurrently --kill-others \"vite ./playground/svelte\" \"npm run watch:dev\"",

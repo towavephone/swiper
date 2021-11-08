@@ -7,21 +7,18 @@ import Swiper from '../../build/swiper-bundle.esm';
 // eslint-disable-next-line
 window.swiper = new Swiper({
   el: '.swiper-container',
-  slideToClickedSlide: true,
-  grabCursor: true,
-  scrollbar: true,
+  // scrollbar: true,
   createElements: true,
   pagination: true,
-  navigation: true,
-  spaceBetween: 20,
-  breakpoints: {
-    640: {
-      slidesPerColumn: 2,
-    },
-    768: {
-      slidesPerColumn: 3,
-    },
+  // navigation: true,
+  direction: 'vertical',
+  mousewheel: {
+    forceToAxis: true,
+    sensitivity: 2,
   },
+  speed: 2000,
+  enableDelayScroll: true,
+  delayScrollTime: 200,
 });
 
 // eslint-disable-next-line no-restricted-globals

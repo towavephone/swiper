@@ -1,7 +1,9 @@
 /* eslint-disable consistent-return */
 import { getWindow, getDocument } from 'ssr-window';
+
 import $ from '../../utils/dom';
 import { now, nextTick, bindModuleMethods } from '../../utils/utils';
+import smoothScrollFunc from './smooth-scroll';
 
 function isEventSupported() {
   const document = getDocument();
@@ -198,6 +200,104 @@ const Mousewheel = {
         : undefined;
       recentWheelEvents.push(newEvent);
 
+      const handleScrollEvent = () => {
+        if (!params.enableDelayScroll) {
+          swiper.mousewheel.animateSlider(newEvent);
+          return;
+        }
+
+        const data = swiper.mousewheelEventData;
+        if (data.isScrolling) {
+          return;
+        }
+
+        const newSnapEvent = {
+          time: now(),
+          delta: Math.abs(delta),
+          direction: Math.sign(delta),
+        };
+        const { lastEventBeforeSnap } = swiper.mousewheel;
+        const ignoreWheelEvents =
+          lastEventBeforeSnap &&
+          newSnapEvent.time < lastEventBeforeSnap.time + 500 &&
+          newSnapEvent.delta <= lastEventBeforeSnap.delta &&
+          newSnapEvent.direction === lastEventBeforeSnap.direction;
+
+        if (ignoreWheelEvents) {
+          return;
+        }
+
+        swiper.mousewheel.lastEventBeforeSnap = undefined;
+
+        if (swiper.params.loop) {
+          swiper.loopFix();
+        }
+
+        // console.log('响应滚轮', data);
+
+        // 先行滚动
+        let position = swiper.getTranslate() + delta * params.sensitivity;
+        const wasBeginning = swiper.isBeginning;
+        const wasEnd = swiper.isEnd;
+
+        if (position >= swiper.minTranslate()) position = swiper.minTranslate();
+        if (position <= swiper.maxTranslate()) position = swiper.maxTranslate();
+
+        const translateValue = swiper.rtlTranslate ? swiper.translate * -1 : swiper.translate;
+        smoothScrollFunc(
+          {
+            tweenType: params.delayScrollMousewheelTweenType,
+            tweenFunc: params.delayScrollMousewheelTweenFunc,
+            frame: params.delayScrollMousewheelTweenFrame,
+            initialValue: translateValue,
+            changeValue: position - translateValue,
+          },
+          ({ distance, result }) => {
+            if (result !== 'finish') {
+              swiper.setTransition(0);
+              swiper.setTranslate(distance);
+              return;
+            }
+
+            swiper.updateProgress();
+            swiper.updateActiveIndex();
+            swiper.updateSlidesClasses();
+
+            if ((!wasBeginning && swiper.isBeginning) || (!wasEnd && swiper.isEnd)) {
+              swiper.updateSlidesClasses();
+            }
+
+            clearTimeout(swiper.mousewheel.timeout);
+            swiper.mousewheel.timeout = undefined;
+
+            const snapToThreshold =
+              delta > 0
+                ? params.delayScrollPrevSnapToThreshold
+                : params.delayScrollNextSnapToThreshold;
+
+            swiper.mousewheel.timeout = nextTick(() => {
+              // 开始幻灯片滚动
+              data.isScrolling = true;
+              // console.log('开始幻灯片滚动');
+              swiper.slideToClosest(swiper.params.speed, true, undefined, snapToThreshold);
+              swiper.mousewheel.lastEventBeforeSnap = newSnapEvent;
+              // 结束滚动后立即设置为不滚动
+              setTimeout(() => {
+                // console.log('结束幻灯片滚动');
+                data.isScrolling = false;
+              }, swiper.params.speed);
+
+              // Emit event
+              if (!ignoreWheelEvents) swiper.emit('scroll', e);
+
+              // Stop autoplay
+              if (swiper.params.autoplay && swiper.params.autoplayDisableOnInteraction)
+                swiper.autoplay.stop();
+            }, params.delayScrollTime); // no delay; move on next tick
+          },
+        );
+      };
+
       // If there is at least one previous recorded event:
       //   If direction has changed or
       //   if the scroll is quicker than the previous one:
@@ -210,10 +310,10 @@ const Mousewheel = {
           newEvent.delta > prevEvent.delta ||
           newEvent.time > prevEvent.time + 150
         ) {
-          swiper.mousewheel.animateSlider(newEvent);
+          handleScrollEvent();
         }
       } else {
-        swiper.mousewheel.animateSlider(newEvent);
+        handleScrollEvent();
       }
 
       // If it's time to release the scroll:
@@ -455,6 +555,14 @@ export default {
       eventsTarget: 'container',
       thresholdDelta: null,
       thresholdTime: null,
+      // Delay scroll
+      enableDelayScroll: false,
+      delayScrollTime: 100,
+      delayScrollNextSnapToThreshold: 0.01,
+      delayScrollPrevSnapToThreshold: 1,
+      delayScrollMousewheelTweenType: 'Cubic',
+      delayScrollMousewheelTweenFunc: 'easeOut',
+      delayScrollMousewheelTweenFrame: 20,
     },
   },
   create() {
