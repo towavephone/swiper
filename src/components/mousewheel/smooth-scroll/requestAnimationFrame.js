@@ -1,5 +1,9 @@
+/* eslint-disable func-names */
 /* eslint-disable no-restricted-globals */
-(() => {
+(function (window) {
+  if (typeof window === 'undefined') {
+    return;
+  }
   let lastTime = 0;
   const vendors = ['webkit', 'moz'];
   for (let x = 0; x < vendors.length && !window.requestAnimationFrame; x += 1) {
@@ -25,4 +29,4 @@
       clearTimeout(id);
     };
   }
-})();
+})(this);
