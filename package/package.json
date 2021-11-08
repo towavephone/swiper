@@ -1,6 +1,6 @@
 {
   "name": "xp-swiper",
-  "version": "6.8.6",
+  "version": "6.8.7",
   "description": "Most modern mobile touch slider and framework with hardware accelerated transitions",
   "main": "swiper.cjs.js",
   "jsnext:main": "swiper.esm.js",
